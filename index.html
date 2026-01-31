@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Valentine 💘</title>
 
+  <!-- Romantic font -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+
   <style>
     body {
       margin: 0;
@@ -21,7 +24,9 @@
 
     .screen {
       width: 100%;
-      padding: 20px;
+      padding: 24px;
+      position: relative;
+      z-index: 2;
     }
 
     .countdown {
@@ -34,17 +39,37 @@
       font-size: 1.2rem;
     }
 
+    .question {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .final-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+    }
+
+    .final-sub {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+
     .buttons {
-      margin-top: 40px;
+      margin-top: 30px;
       display: flex;
       justify-content: center;
-      gap: 20px;
+      gap: 24px;
       flex-wrap: wrap;
     }
 
     button {
-      font-size: 1.2rem;
-      padding: 15px 30px;
+      font-size: 1.3rem;
+      padding: 18px 38px;
       border-radius: 40px;
       border: 2px solid black;
       background: white;
@@ -55,25 +80,34 @@
     .yes-big {
       width: 50vw;
       height: 30vh;
-      font-size: 2rem;
+      font-size: 2.1rem;
     }
 
+    /* Celebration text */
     .fly {
       position: absolute;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       font-weight: bold;
       animation: fly 5s linear forwards;
+      z-index: 3;
+      color: white;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
     }
 
     @keyframes fly {
-      from {
-        transform: translateY(100vh);
-        opacity: 1;
-      }
-      to {
-        transform: translateY(-120vh);
-        opacity: 0;
-      }
+      from { transform: translateY(100vh); opacity: 1; }
+      to { transform: translateY(-120vh); opacity: 0; }
+    }
+
+    /* Video background */
+    .video-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: 1;
     }
   </style>
 </head>
@@ -83,9 +117,6 @@
 
   <script>
     const app = document.getElementById("app");
-
-    /* ---------------- COUNTDOWN ---------------- */
-
     let count = 10;
 
     function startCountdown() {
@@ -105,9 +136,7 @@
             "seems like you’ve got time for a besito (or two or three or one million)";
         }
 
-        if (count >= 0) {
-          countEl.textContent = count;
-        }
+        if (count >= 0) countEl.textContent = count;
 
         if (count < 0) {
           clearInterval(interval);
@@ -116,16 +145,12 @@
       }, 2000);
     }
 
-    /* ---------------- PROPOSAL ---------------- */
-
     function showProposal(retry) {
       let noScale = 1;
       let noClicks = 0;
 
       app.innerHTML = `
-        <div class="message" style="font-size:2rem;">
-          Will you be my Valentine? ❤️
-        </div>
+        <div class="question">Will you be my Valentine? ❤️</div>
         <div class="buttons">
           <button id="yes" ${retry ? 'class="yes-big"' : ""}>Yes</button>
           ${retry ? "" : '<button id="no">No</button>'}
@@ -144,7 +169,7 @@
 
         if (noClicks >= 5) {
           app.innerHTML = `
-            <div class="message" style="font-size:1.6rem;">
+            <div class="message" style="font-size:1.5rem;">
               you listen to me buddy – let’s try that again
             </div>
           `;
@@ -153,47 +178,47 @@
       };
     }
 
-    /* ---------------- CELEBRATION ---------------- */
-
     function celebration() {
       app.innerHTML = "";
 
-      const phrases = [
-        "WOOOOOO",
-        "YEAAAHHHH BUDDDYYYYY",
-        "LESSSGOOOOO"
-      ];
+      const video = document.createElement("video");
+      video.src = "valentine.mp4";
+      video.autoplay = true;
+      video.muted = true;
+      video.playsInline = true;
+      video.loop = true;
+      video.className = "video-bg";
+      document.body.appendChild(video);
 
+      const phrases = ["WOOOOOO", "YEAAAHHHH BUDDDYYYYY", "LESSSGOOOOO"];
       const end = Date.now() + 5000;
 
       const spam = setInterval(() => {
         if (Date.now() > end) {
           clearInterval(spam);
+          video.remove();
           finalScreen();
           return;
         }
 
         const text = document.createElement("div");
         text.className = "fly";
-        text.textContent =
-          phrases[Math.floor(Math.random() * phrases.length)];
-
+        text.textContent = phrases[Math.floor(Math.random() * phrases.length)];
         text.style.left = Math.random() * 90 + "vw";
-        text.style.animationDuration = Math.random() * 2 + 3 + "s";
-
         document.body.appendChild(text);
 
         setTimeout(() => text.remove(), 5000);
       }, 200);
     }
 
-    /* ---------------- FINAL ---------------- */
-
     function finalScreen() {
       document.body.innerHTML = `
         <div class="screen">
-          <div class="message" style="font-size:1.8rem;">
+          <div class="final-text">
             Thank you Kayleighisababe, for picking me for choosing me for LOVING ME 🥰
+          </div>
+          <div class="final-sub">
+            I am honoured to be your valentine, this year and always. I love you ❤️
           </div>
         </div>
       `;
